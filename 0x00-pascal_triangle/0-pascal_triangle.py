@@ -1,29 +1,24 @@
 #!/usr/bin/python3
-"""Pascal triangle"""
-from math import factorial
+"""A script to determine pascal's triangle for any number"""
 
 
-def pascal_triangle(n: int):
-    """Generating a pascal triangle using this formal
-    n!//r! * (n - r)!
+def pascal_triangle(n):
+    """
+    returns a list of lists of integers representing the Pascal’s triangle of n
     """
     triangle = []
-    # if n is 0 or < 0
-    if type(n) is not int or n <= 0:
-        return []
+
+    # return (trianlgle if n <= 0)
+    if n <= 0:
+        return triangle
     for i in range(n):
-        """using factorial equation for
-               i!
-          -----------
-          j! * (i - j)
-        using 2 as example in the loop above
-              2!
-            --------
-            1! * (2 - 1)! which is 2 and move to next j loop
-            and give use 1, 2, 1
-        """
-        row = [factorial(i) // (factorial(j) * factorial(i - j))
-               for j in range(i + 1)]
-        str(row).replace(", ", ",")
-        triangle.append(row)
+        temp_list = []
+
+        for j in range(i+1):
+            if j == 0 or j == i:
+                temp_list.append(1)
+            else:
+                temp_list.append(triangle[i-1][j-1] + triangle[i-1][j])
+        triangle.append(temp_list)
+    # print(triangle)
     return triangle
