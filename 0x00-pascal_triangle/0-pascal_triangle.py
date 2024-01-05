@@ -7,10 +7,10 @@ def pascal_triangle(n: int):
     """Generating a pascal triangle using this formal
     n!//r! * (n - r)!
     """
+    triangle = []
     # if n is 0 or < 0
     if n <= 0:
         return []
-    triangle = []
     for i in range(n):
         """using factorial equation for
                i!
