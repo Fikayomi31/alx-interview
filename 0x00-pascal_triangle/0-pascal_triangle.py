@@ -9,7 +9,7 @@ def pascal_triangle(n: int):
     """
     triangle = []
     # if n is 0 or < 0
-    if n <= 0:
+    if type(n) is not int or n <= 0:
         return []
     for i in range(n):
         """using factorial equation for
