@@ -13,13 +13,9 @@ def canUnlockAll(boxes):
     counter = 0  # use to loop the setofkey
     index = 0  # looping through the boxes
 
-    # looping throught the total_key
     while index < len(setofkey):
-        # getting the value in the first box
         set_key = setofkey[index]
-        print(set_key)
         for key in boxes[set_key]:
-            # appending to value if not in setofkey
             if 0 < key < total_box and key not in setofkey:
                 setofkey.append(key)
                 counter += 1
