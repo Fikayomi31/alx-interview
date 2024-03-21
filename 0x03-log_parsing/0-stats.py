@@ -52,7 +52,7 @@ except Exception as err:
 
 finally:
     print('File size: {}'.format(total_size))
-    for key, value in sorted(status_codes_dict.items()):
+    for key, value in sorted(status_dict.items()):
         if value != 0:
             print('{}: {}'.format(key, value))
         
