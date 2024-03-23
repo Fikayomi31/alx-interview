@@ -29,7 +29,9 @@ total_size = 0
 count = 0  # keep count of numbers of line counted
 
 try:
+    """iterates over each line of input received from sys.stdin"""
     for line in sys.stdin:
+        """Split the line based on whitespace"""
         line_list = line.split(" ")
 
         if len(line_list) > 4:
