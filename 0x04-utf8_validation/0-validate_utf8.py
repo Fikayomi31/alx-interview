@@ -1,43 +1,39 @@
 #!/usr/bin/python3
-""" Method that determines if a given data set
-represents a valid UTF-8 encoding
+"""This file attempts to check if a string is a valid UTF8 encoding
 """
 
+
 def validUTF8(data):
-    # Number of bytes in the current UTF-8 character
-    num_bytes = 0
-    
-    # Mask to check if a byte is a valid continuation byte
-    mask1 = 1 << 7
-    mask2 = 1 << 6
-    
+    """Checks if the numbers in the data is a valid utf8 encoding
+
+    Args:
+        data (int): a sequence representing bytes
+    """
+    num_bytes_to_process = 0
+
     for byte in data:
-        mask = 1 << 7
-        if num_bytes == 0:
-            # Count the number of leading 1s to determine the number of bytes
-            while mask & byte:
-                num_bytes += 1
-                mask = mask >> 1
-            
-            # Invalid UTF-8 start byte
-            if num_bytes == 0:
-                continue
-            
-            # A single UTF-8 character can be at most 4 bytes
-            if num_bytes > 4 or num_bytes == 1:
+        # Check if it's a continuation byte (starts with 10)
+        if byte & 0xC0 == 0x80:
+            if num_bytes_to_process == 0:
                 return False
-            
+            num_bytes_to_process -= 1
         else:
-            # Check if the byte is a continuation byte
-            if not (byte & mask1 and not (byte & mask2)):
+            # Count the number of bytes to process based on the first byte
+            if num_bytes_to_process > 0:
                 return False
-        
-        num_bytes -= 1
-    
-    # If all bytes are processed and no incomplete character is left
-    return num_bytes == 0
+            if byte & 0x80 == 0:
+                num_bytes_to_process = 0
+            # check whether it 2 bytes which is 0xC0 is 110
+            # and 0xE0 is also 1110
+            elif byte & 0xE0 == 0xC0:
+                num_bytes_to_process = 1
+            # check whether it 3 byte which 0xF0 is 11110
+            elif byte & 0xF0 == 0xE0:
+                num_bytes_to_process = 2
+            # check whether it 4 byte which 0xF8 is 111110
+            elif byte & 0xF8 == 0xF0:
+                num_bytes_to_process = 3
+            else:
+                return False
 
-# Example usage:
-data = [197, 130, 1]  # Represents the UTF-8 encoding for 'ç'
-print(validUTF8(data))  # Output: True
-
+    return num_bytes_to_process == 0
