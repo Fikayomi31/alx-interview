@@ -3,39 +3,41 @@
 represents a valid UTF-8 encoding
 """
 
-
 def validUTF8(data):
-    # Help to give track of many byte
-    count = 0
+    # Number of bytes in the current UTF-8 character
+    num_bytes = 0
+    
+    # Mask to check if a byte is a valid continuation byte
+    mask1 = 1 << 7
+    mask2 = 1 << 6
+    
     for byte in data:
-        # check if byte is within ASCI value
-        if not 0 <= byte <= 255:
-            return False
-        # we will start reading the byte
-        if count == 0:
-            # this check if byte is == 0 and shift
-            # all the bit of the byte to right by 7 position by 0
-            if byte >> 7 == 0b0:
+        mask = 1 << 7
+        if num_bytes == 0:
+            # Count the number of leading 1s to determine the number of bytes
+            while mask & byte:
+                num_bytes += 1
+                mask = mask >> 1
+            
+            # Invalid UTF-8 start byte
+            if num_bytes == 0:
                 continue
-
-            # check if byte is start from 0b110 which is 2 byt
-            # and shift bit of the byte to right by 5 position
-            elif byte >> 5 == 0b110:
-                count = 1
-            # check if byte start from 0b1110 which is 3 byte
-            # and shift bit of the byte to right by 4 position
-            elif byte >> 4 == 0b1110:
-                count = 2
-            # check if byte start from 0b11110 which is 4 byte
-            # and shift bit of the byte to right by 5 position
-            elif byte >> 3 == 0b11110:
-                count = 3
-            else:
+            
+            # A single UTF-8 character can be at most 4 bytes
+            if num_bytes > 4 or num_bytes == 1:
                 return False
+            
         else:
-            # check if byte is a continuation byte
-            if byte >> 6 == 0b10:
-                count -= 1
-            else:
+            # Check if the byte is a continuation byte
+            if not (byte & mask1 and not (byte & mask2)):
                 return False
-    return count == 0
+        
+        num_bytes -= 1
+    
+    # If all bytes are processed and no incomplete character is left
+    return num_bytes == 0
+
+# Example usage:
+data = [197, 130, 1]  # Represents the UTF-8 encoding for 'ç'
+print(validUTF8(data))  # Output: True
+
